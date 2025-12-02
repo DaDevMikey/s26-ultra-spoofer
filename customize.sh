@@ -39,7 +39,7 @@ if [ ! -z "$AI_FILE" ]; then
     # Patch the AI version
     # Looking for the tag and replacing the content with 20261
     ui_print "Patching AI Version to 20261..."
-    sed -i 's|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>.*</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>20261</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|g' "$DEST_DIR/floating_feature.xml"
+    sed -i 's|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>.*</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>20263</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|g' "$DEST_DIR/floating_feature.xml"
     
     ui_print "Galaxy AI spoofed successfully."
 else
