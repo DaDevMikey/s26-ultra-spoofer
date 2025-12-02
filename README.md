@@ -12,14 +12,12 @@ A module that spoofs your device to appear as a Samsung Galaxy S26 Ultra with th
 
 - Rooted Android device
 - Magisk or KernelSU installed
-- LSPosed framework (recommended)
 
 ## Installation
 
 1. Download the latest release from the [Releases](https://github.com/DaDevMikey/s26-ultra-spoofer/releases) page
 2. Install the module via Magisk Manager or KernelSU
 3. Reboot your device
-4. (Optional) If using LSPosed, enable the module for specific apps
 
 ## Usage
 
