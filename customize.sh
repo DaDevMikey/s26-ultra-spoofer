@@ -1,46 +1,39 @@
-ui_print "S26Ultra Spoofer"
-ui_print "Spoof Your Device To S26 Ultra Spoofer"
-ui_print "v1.0.0"
+#!/system/bin/sh
 
-# Removed the volume key confirmation part
-ui_print "Applying S26 Ultra Spoofer..."
-ui_print "Modifying build properties..."
+ui_print "- Installing UI 8.5 + S26 Ultra Spoof"
+ui_print "- Patching AI Version to 20263"
+ui_print "- Installing Personal Data Intelligence (For Now Nudge)"
 
-# --- GALAXY AI SPOOFING START ---
-ui_print "Locating floating_feature.xml..."
-
-# Try to find the file in common locations
-AI_FILE=""
-if [ -f "/system/etc/floating_feature.xml" ]; then
-    AI_FILE="/system/etc/floating_feature.xml"
-elif [ -f "/system/product/etc/floating_feature.xml" ]; then
-    AI_FILE="/system/product/etc/floating_feature.xml"
-elif [ -f "/vendor/etc/floating_feature.xml" ]; then
-    AI_FILE="/vendor/etc/floating_feature.xml"
-fi
-
-if [ ! -z "$AI_FILE" ]; then
-    ui_print "Found at: $AI_FILE"
-    
-    # Create the directory structure in the module path
-    # $MODPATH is where magisk builds the module before mounting
-    DEST_DIR="$MODPATH$(dirname $AI_FILE)"
-    mkdir -p "$DEST_DIR"
-    
-    # Copy the original file to our module
-    cp "$AI_FILE" "$DEST_DIR/"
-    
-    # Patch the AI version
-    # Looking for the tag and replacing the content with 20261
-    ui_print "Patching AI Version to 20263..."
-    sed -i 's|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>.*</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|<SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>20263</SEC_FLOATING_FEATURE_COMMON_CONFIG_AI_VERSION>|g' "$DEST_DIR/floating_feature.xml"
-    
-    ui_print "Galaxy AI spoofed successfully."
+if [ -d "$MODPATH/system/priv-app/PersonalDataIntelligence" ]; then
+    if [ -f "$MODPATH/system/priv-app/PersonalDataIntelligence/base.apk" ]; then
+        mv "$MODPATH/system/priv-app/PersonalDataIntelligence/base.apk" \
+           "$MODPATH/system/priv-app/PersonalDataIntelligence/PersonalDataIntelligence.apk"
+    fi
+    set_perm_recursive $MODPATH/system/priv-app/PersonalDataIntelligence 0 0 0755 0644
 else
-    ui_print "! Could not find floating_feature.xml. AI spoof skipped."
+    ui_print "! Error: PersonalDataIntelligence folder not found!"
 fi
-# --- GALAXY AI SPOOFING END ---
 
-ui_print "S26 Ultra Spoofer applied. Reboot to see the magic. (if you want to also use the new AI features you can install the apks from our telegram channel t.me/oneui85apks)"
+# Check carrier code before replacing optics
+SALES_CODE=$(getprop ro.csc.sales_code)
+if [ -z "$SALES_CODE" ]; then
+    SALES_CODE=$(getprop ril.sales_code)
+fi
 
-exit 0
+ui_print "- Detected carrier code: $SALES_CODE"
+
+if [ "$SALES_CODE" = "EUX" ] || [ "$SALES_CODE" = "EUY" ]; then
+    ui_print "- Replacing optics folder for $SALES_CODE"
+    if [ -d "$MODPATH/system/etc/optics" ]; then
+        touch "$MODPATH/system/etc/optics/.replace"
+        set_perm_recursive "$MODPATH/system/etc/optics" 0 0 0755 0644
+    fi
+else
+    ui_print "! Skipping optics replacement (not EUX/EUY device)"
+    ui_print "! Your carrier: $SALES_CODE"
+    rm -rf "$MODPATH/system/etc/optics"
+fi
+
+if [ -f "$MODPATH/system/etc/permissions/com.samsung.android.oneui.version.xml" ]; then
+    set_perm $MODPATH/system/etc/permissions/com.samsung.android.oneui.version.xml 0 0 0644
+fi
